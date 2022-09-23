@@ -11,7 +11,7 @@ function Main({state}) {
     return (
         <div className={'main-container'}>
             <div className={'poster'}>
-                <img src={`https://image.tmdb.org/t/p/original/${state.movieDetails.posterPath}`} alt={'poster'} />
+                { state.movieDetails.posterPath !== null && <img src={`https://image.tmdb.org/t/p/original/${state.movieDetails.posterPath}`} alt={'poster'} /> }
             </div>
 
             <div className={'details'}>

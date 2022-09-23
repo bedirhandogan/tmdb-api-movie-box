@@ -1,3 +1,9 @@
+@mixin theme($theme: rgba(255, 255, 255, 0.1)) {
+  background: $theme;
+  backdrop-filter: blur(3.3px);
+  -webkit-backdrop-filter: blur(3.3px);
+}
+
 .main-container {
   width: 1024px;
   margin: 0 auto;
@@ -16,9 +22,7 @@
   }
 
   .poster, .details {
-    background-color: rgb(255, 255, 255, 0.1);
-    backdrop-filter: blur(3.3px);
-    -webkit-backdrop-filter: blur(3.3px);
+    @include theme;
     width: 100%;
     height: 500px;
     border-radius: var(--b-radius-primary);

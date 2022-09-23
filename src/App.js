@@ -17,7 +17,7 @@ function reducer(state, action) {
 
 function App() {
     const [state, dispatch] = useReducer(reducer, {
-        value: '',
+        value: 'venom',
         searchBoxView: [],
         movieDetails: {
             name: 'Venom',
@@ -44,7 +44,7 @@ function App() {
 
     return (
       <div className={'app'}>
-          <img src={`https://image.tmdb.org/t/p/original${state.movieDetails.backdropPath}`} alt={'backdrop'} id={'backdrop'} />
+          { state.movieDetails.backdropPath !== null && <img src={`https://image.tmdb.org/t/p/original${state.movieDetails.backdropPath}`} alt={'backdrop'} id={'backdrop'} /> }
           <Navbar state={state} dispatch={dispatch} />
           <Main state={state} />
       </div>
