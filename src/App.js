@@ -1,13 +1,15 @@
 import Navbar from "components/layout/navbar";
-import { useReducer} from "react";
+import {useReducer} from "react";
 import Main from "components/layout/main";
 
 function reducer(state, action) {
     switch (action.type) {
         case 'UPDATE_VALUE':
             return { ...state, value: action.value }
-        case 'UPDATE_BACKGROUND_PATH':
-            return { backdrop_path: action.value }
+        case 'UPDATE_SEARCH_VIEW':
+            return { ...state, searchBoxView: [action.value] }
+        case 'UPDATE_MOVIE_DETAILS':
+            return { ...state, movieDetails: action.value }
         default:
             throw new Error();
     }
@@ -16,6 +18,7 @@ function reducer(state, action) {
 function App() {
     const [state, dispatch] = useReducer(reducer, {
         value: '',
+        searchBoxView: [],
         movieDetails: {
             name: 'Venom',
             date: '2018-09-28',
