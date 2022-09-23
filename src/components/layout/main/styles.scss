@@ -136,6 +136,7 @@
         }
 
         .company::after {
+          color: var(--color-third);
           content: '•';
           margin-right: 5px;
         }
