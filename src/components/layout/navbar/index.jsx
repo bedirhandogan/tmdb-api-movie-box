@@ -5,6 +5,7 @@ import {useEffect, useState} from "react";
 
 function Navbar({state, dispatch}) {
     const [view, setView] = useState(false);
+
     useEffect(() => {
         axios(`${process.env.REACT_APP_API_BASE_URL}/search/movie?api_key=${process.env.REACT_APP_API_KEY}&query=${state.value}`)
             .then(response => {
@@ -13,7 +14,7 @@ function Navbar({state, dispatch}) {
                     value: response.data.results
                 });
             });
-    }, [state.value])
+    }, [dispatch, state.value])
 
     const onSubmit = event => {
         event.preventDefault();
