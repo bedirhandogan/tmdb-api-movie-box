@@ -5,7 +5,7 @@ import Main from "components/layout/main";
 function reducer(state, action) {
     switch (action.type) {
         case 'UPDATE_VALUE':
-            return { value: action.value }
+            return { ...state, value: action.value }
         case 'UPDATE_BACKGROUND_PATH':
             return { backdrop_path: action.value }
         default:
@@ -15,7 +15,7 @@ function reducer(state, action) {
 
 function App() {
     const [state, dispatch] = useReducer(reducer, {
-        value: 'the%20100',
+        value: '',
         movieDetails: {
             name: 'Venom',
             date: '2018-09-28',
