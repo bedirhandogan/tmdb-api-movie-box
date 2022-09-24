@@ -30,8 +30,8 @@ function App() {
     });
 
     const defaultMovieDetails = useCallback(
-        async (id) => {
-            await axios(`${process.env.REACT_APP_API_BASE_URL}/movie/${id}?api_key=${process.env.REACT_APP_API_KEY}`)
+        (id) => {
+            axios(`${process.env.REACT_APP_API_BASE_URL}/movie/${id}?api_key=${process.env.REACT_APP_API_KEY}`)
                 .then(response => {
                     dispatch({
                         type: 'UPDATE_MOVIE_DETAILS',
