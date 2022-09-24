@@ -1,6 +1,7 @@
 import Navbar from "components/layout/navbar";
-import {useReducer} from "react";
+import {useEffect, useReducer, useCallback} from "react";
 import Main from "components/layout/main";
+import axios from "axios";
 
 function reducer(state, action) {
     return {
@@ -15,27 +16,46 @@ function App() {
         value: 'venom',
         searchBoxView: [],
         movieDetails: {
-            name: 'Venom',
-            date: '2018-09-28',
-            tagline: 'The world has enough Superheroes.',
-            overview: 'Investigative journalist Eddie Brock attempts a comeback following a scandal, but accidentally becomes the host of Venom, a violent, super powerful alien symbiote. Soon, he must rely on his newfound powers to protect the world from a shadowy organization looking for a symbiote of their own.',
-            backdropPath: '/VuukZLgaCrho2Ar8Scl9HtV3yD.jpg',
-            posterPath: '/2uNW4WbgBXL25BAbXGLnLqX71Sw.jpg',
-            language: 'en',
-            genres: [
-                { id: 878, name: "Science Fiction" },
-                { id: 28, name: "Action" }
-            ],
-            productionCompanies: [
-                { id: 7505, name: "Marvel Entertainment" },
-                { id: 53462, name: "Matt Tolmach Productions" },
-                { id: 81620, name: "Tencent Pictures" },
-                { id: 84041, name: "Pascal Pictures" },
-                { id: 166230, name: "Avi Arad Productions" }
-            ],
-            voteAverage: 6.8
+            name: '',
+            date: '',
+            tagline: '',
+            overview: '',
+            backdropPath: null,
+            posterPath: null,
+            language: '',
+            genres: [],
+            productionCompanies: [],
+            voteAverage: 0
         }
     });
+
+    const defaultMovieDetails = useCallback(
+        async (id) => {
+            await axios(`${process.env.REACT_APP_API_BASE_URL}/movie/${id}?api_key=${process.env.REACT_APP_API_KEY}`)
+                .then(response => {
+                    dispatch({
+                        type: 'UPDATE_MOVIE_DETAILS',
+                        value: {
+                            name: response.data.title,
+                            date: response.data.release_date,
+                            tagline: response.data.tagline,
+                            overview: response.data.overview,
+                            backdropPath: response.data.backdrop_path,
+                            posterPath: response.data.poster_path,
+                            language: response.data.original_language,
+                            genres: response.data.genres,
+                            productionCompanies: response.data.production_companies,
+                            voteAverage: response.data.vote_average
+                        }
+                    })
+                })
+        },
+        [dispatch],
+    );
+
+    useEffect(() => {
+        defaultMovieDetails(335983); // Venom ID
+    }, [dispatch, defaultMovieDetails]);
 
     return (
       <div className={'app'}>
