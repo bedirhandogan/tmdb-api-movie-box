@@ -3,16 +3,11 @@ import {useReducer} from "react";
 import Main from "components/layout/main";
 
 function reducer(state, action) {
-    switch (action.type) {
-        case 'UPDATE_VALUE':
-            return { ...state, value: action.value }
-        case 'UPDATE_SEARCH_VIEW':
-            return { ...state, searchBoxView: [action.value] }
-        case 'UPDATE_MOVIE_DETAILS':
-            return { ...state, movieDetails: action.value }
-        default:
-            throw new Error();
-    }
+    return {
+        'UPDATE_VALUE': { ...state, value: action.value },
+        'UPDATE_SEARCH_VIEW': { ...state, searchBoxView: [action.value] },
+        'UPDATE_MOVIE_DETAILS': { ...state, movieDetails: action.value }
+    }[action.type]
 }
 
 function App() {
