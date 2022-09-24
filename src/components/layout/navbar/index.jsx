@@ -1,20 +1,28 @@
 import './styles.scss';
 import {Search} from "assets";
 import axios from "axios";
-import {useEffect, useState} from "react";
+import {useEffect, useState, useCallback} from "react";
 
 function Navbar({state, dispatch}) {
     const [view, setView] = useState(false);
 
-    useEffect(() => {
-        axios(`${process.env.REACT_APP_API_BASE_URL}/search/movie?api_key=${process.env.REACT_APP_API_KEY}&query=${state.value}`)
-            .then(response => {
-                dispatch({
-                    type: 'UPDATE_SEARCH_VIEW',
-                    value: response.data.results
+    const searchGetMovies = useCallback(
+        async () => {
+            await axios(`${process.env.REACT_APP_API_BASE_URL}/search/movie?api_key=${process.env.REACT_APP_API_KEY}&query=${state.value}`)
+                .then(response => {
+                    dispatch({
+                        type: 'UPDATE_SEARCH_VIEW',
+                        value: response.data.results
+                    });
                 });
-            });
-    }, [dispatch, state.value])
+        },
+        [dispatch, state.value],
+    );
+
+
+    useEffect(() => {
+        searchGetMovies();
+    }, [dispatch, searchGetMovies, state.value])
 
     const onSubmit = event => {
         event.preventDefault();
