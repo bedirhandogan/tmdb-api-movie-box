@@ -1,23 +1,19 @@
 import './styles.scss';
 import {Search} from "assets";
-import axios from "axios";
-import {useEffect, useState, useCallback} from "react";
+import {useCallback, useEffect, useState} from "react";
+import {getMovieDetails, searchMovies} from "services";
 
 function Navbar({state, dispatch}) {
-    const [view, setView] = useState(false);
+    const [view, setView] = useState(false); // search box preview
 
-    const searchGetMovies = useCallback(
-        () => {
-            axios(`${process.env.REACT_APP_API_BASE_URL}/search/movie?api_key=${process.env.REACT_APP_API_KEY}&query=${state.value}`)
-                .then(response => {
-                    dispatch({
-                        type: 'UPDATE_SEARCH_VIEW',
-                        value: response.data.results
-                    });
-                });
-        },
-        [dispatch, state.value],
-    );
+    const searchGetMovies = useCallback(() => {
+        searchMovies(state.value).then(res => {
+            dispatch({
+                type: 'UPDATE_SEARCH_VIEW',
+                value: res.results.slice(0, 5)
+            })
+        })
+    }, [dispatch, state.value],);
 
 
     useEffect(() => {
@@ -34,36 +30,36 @@ function Navbar({state, dispatch}) {
 
     const clickHandle = id => {
         setView(false);
-        axios(`${process.env.REACT_APP_API_BASE_URL}/movie/${id}?api_key=${process.env.REACT_APP_API_KEY}`)
-            .then(response => {
-                dispatch({
-                    type: 'UPDATE_MOVIE_DETAILS',
-                    value: {
-                        name: response.data.title,
-                        date: response.data.release_date,
-                        tagline: response.data.tagline,
-                        overview: response.data.overview,
-                        backdropPath: response.data.backdrop_path,
-                        posterPath: response.data.poster_path,
-                        language: response.data.original_language,
-                        genres: response.data.genres,
-                        productionCompanies: response.data.production_companies,
-                        voteAverage: response.data.vote_average
-                    }
-                })
+        getMovieDetails(id).then(result => {
+            dispatch({
+                type: 'UPDATE_MOVIE_DETAILS', value: {
+                    name: result.title,
+                    date: result.release_date,
+                    tagline: result.tagline,
+                    overview: result.overview,
+                    backdropPath: result.backdrop_path,
+                    posterPath: result.poster_path,
+                    language: result.original_language,
+                    genres: result.genres,
+                    productionCompanies: result.production_companies,
+                    voteAverage: result.vote_average
+                }
             })
+        })
     }
 
     return (<header>
         <h2>Movie Box</h2>
         <form>
             <img src={Search} alt={'search icon'}/>
-            <input type={'text'} placeholder={'Search'} onKeyPress={event => event.key === 'Enter' && onSubmit(event) }/>
-            <div className={'search-view'} style={!view ? { display: "none" } : { display: 'block' }}>
-                { state.searchBoxView[0]?.slice(0, 5).map(item => <div key={item.id} onClick={() => clickHandle(item.id)}>
-                    { item.backdrop_path !== null && <img src={`https://image.tmdb.org/t/p/original/${item.backdrop_path}`} alt={'item'} />}
+            <input type={'text'} placeholder={'Search'} onKeyPress={event => event.key === 'Enter' && onSubmit(event)}/>
+            <div className={'search-view'} style={!view ? {display: "none"} : {display: 'block'}}>
+                {state.searchBoxView[0]?.map(item => <div key={item.id}
+                                                                      onClick={() => clickHandle(item.id)}>
+                    {item.backdrop_path !== null &&
+                        <img src={`https://image.tmdb.org/t/p/original/${item.backdrop_path}`} alt={'item'}/>}
                     <span>{item.title}</span>
-                </div> )}
+                </div>)}
             </div>
         </form>
     </header>);

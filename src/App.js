@@ -1,21 +1,19 @@
 import Navbar from "components/layout/navbar";
-import {useEffect, useReducer, useCallback} from "react";
+import {useCallback, useEffect, useReducer} from "react";
 import Main from "components/layout/main";
-import axios from "axios";
+import {getMovieDetails} from "services";
 
 function reducer(state, action) {
     return {
-        'UPDATE_VALUE': { ...state, value: action.value },
-        'UPDATE_SEARCH_VIEW': { ...state, searchBoxView: [action.value] },
-        'UPDATE_MOVIE_DETAILS': { ...state, movieDetails: action.value }
+        'UPDATE_VALUE': {...state, value: action.value},
+        'UPDATE_SEARCH_VIEW': {...state, searchBoxView: [action.value]},
+        'UPDATE_MOVIE_DETAILS': {...state, movieDetails: action.value}
     }[action.type]
 }
 
 function App() {
     const [state, dispatch] = useReducer(reducer, {
-        value: 'venom',
-        searchBoxView: [],
-        movieDetails: {
+        value: 'venom', searchBoxView: [], movieDetails: {
             name: '',
             date: '',
             tagline: '',
@@ -29,41 +27,36 @@ function App() {
         }
     });
 
-    const defaultMovieDetails = useCallback(
-        (id) => {
-            axios(`${process.env.REACT_APP_API_BASE_URL}/movie/${id}?api_key=${process.env.REACT_APP_API_KEY}`)
-                .then(response => {
-                    dispatch({
-                        type: 'UPDATE_MOVIE_DETAILS',
-                        value: {
-                            name: response.data.title,
-                            date: response.data.release_date,
-                            tagline: response.data.tagline,
-                            overview: response.data.overview,
-                            backdropPath: response.data.backdrop_path,
-                            posterPath: response.data.poster_path,
-                            language: response.data.original_language,
-                            genres: response.data.genres,
-                            productionCompanies: response.data.production_companies,
-                            voteAverage: response.data.vote_average
-                        }
-                    })
-                })
-        },
-        [dispatch],
-    );
+    const defaultMovieDetails = useCallback(id => {
+        getMovieDetails(id).then(result => {
+            dispatch({
+                type: 'UPDATE_MOVIE_DETAILS', value: {
+                    name: result.title,
+                    date: result.release_date,
+                    tagline: result.tagline,
+                    overview: result.overview,
+                    backdropPath: result.backdrop_path,
+                    posterPath: result.poster_path,
+                    language: result.original_language,
+                    genres: result.genres,
+                    productionCompanies: result.production_companies,
+                    voteAverage: result.vote_average
+                }
+            })
+        })
+    }, [dispatch]);
 
     useEffect(() => {
         defaultMovieDetails(335983); // Venom ID
     }, [dispatch, defaultMovieDetails]);
 
-    return (
-      <div className={'app'}>
-          { state.movieDetails.backdropPath !== null && <img src={`https://image.tmdb.org/t/p/original${state.movieDetails.backdropPath}`} alt={'backdrop'} id={'backdrop'} /> }
-          <Navbar state={state} dispatch={dispatch} />
-          <Main state={state} />
-      </div>
-  );
+    return (<div className={'app'}>
+            {state.movieDetails.backdropPath !== null &&
+                <img src={`https://image.tmdb.org/t/p/original${state.movieDetails.backdropPath}`} alt={'backdrop'}
+                     id={'backdrop'}/>}
+            <Navbar state={state} dispatch={dispatch}/>
+            <Main state={state}/>
+        </div>);
 }
 
 export default App;
