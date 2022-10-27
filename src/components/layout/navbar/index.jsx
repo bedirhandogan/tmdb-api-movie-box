@@ -13,7 +13,7 @@ function Navbar({state, dispatch}) {
                 value: res.results.slice(0, 5)
             })
         })
-    }, [dispatch, state.value],);
+    }, [dispatch, state.value]);
 
 
     useEffect(() => {
